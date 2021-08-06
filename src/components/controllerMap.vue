@@ -118,7 +118,7 @@
 									<span class="status">绿灯</span>
 								</div>
 							</section>
-							<div class="switch">
+							<!-- <div class="switch">
 								<span>锁定相位</span>
 								<el-switch
 									v-model="value"
@@ -135,13 +135,13 @@
 									inactive-color="#ff4949"
 								>
 								</el-switch>
-							</div>
+							</div> -->
 						</div>
 					</div>
-					<el-divider></el-divider>
+					<!-- <el-divider></el-divider>
 					<div class="footerBtn">
 						<el-button type="primary">主要按钮</el-button>
-					</div>
+					</div> -->
 				</div>
 			</div>
 		</div>
@@ -181,6 +181,7 @@ export default {
 			historyIntervalFirst: null,
 			historyIntervalSecond: null,
 			historyIntervalThird: null,
+			tempCount: 1
 		};
 	},
 	created() {},
@@ -408,6 +409,7 @@ export default {
 						imageSize: new AMap.Size(24, 26),
 						imageOffset: new AMap.Pixel(0, 3),
 					});
+
 					var carMarkerTips = [];
 					for (var j = 0; j < carTips.length; j++) {
 						carMarkerTips[j] = new AMap.Marker({
@@ -431,6 +433,36 @@ export default {
 					}
 					// 数组赋值
 					this.carMarker = marker.concat(carMarkerTips);
+
+					// 区域模型
+					let contentMapList = [116.513383, 39.780172];
+					let contentMapIcon = new AMap.Icon({
+						size: new AMap.Size(25, 34),
+						image: "static/sector.svg",
+						imageSize: new AMap.Size(120, 120),
+						imageOffset: new AMap.Pixel(-46, -100),
+					});
+					let contentMapMarker = new AMap.Marker({
+							position: contentMapList,
+							map: this.map,
+							// 图标尺寸
+							size: new AMap.Size(25, 34),
+							// 将一张图片的地址设置为 icon
+							icon: contentMapIcon,
+							// 设置了 icon 以后，设置 icon 的偏移量，以 icon 的 [center bottom] 为原点
+							offset: new AMap.Pixel(-13, -30),
+						});
+					this.map.add(contentMapMarker);
+					this.carMarker = marker.concat(contentMapMarker);
+					console.log(this.carMarker);
+					setInterval( () => {
+						if(this.tempCount % 2 === 0 ){
+							this.map.remove(contentMapMarker);
+						}else{
+							this.map.add(contentMapMarker);
+						}
+						this.tempCount++
+					},1000)
 					// 窗体点击事件
 					function markerClick(e) {
 						// console.log(e);
@@ -1728,11 +1760,11 @@ h4 {
 					}
 				}
 			}
-			/deep/ .el-divider--horizontal {
-				margin: 14px 0;
-				background: #ffffff;
-				opacity: 0.2;
-			}
+			// /deep/ .el-divider--horizontal {
+			// 	margin: 14px 0;
+			// 	background: #ffffff;
+			// 	opacity: 0.2;
+			// }
 			.footerBtn {
 				display: flex;
 				justify-content: flex-end;
